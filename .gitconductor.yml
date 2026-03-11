@@ -1,0 +1,50 @@
+# gitconductor repo configuration
+enabled: true
+protectedBranches:
+  - main
+  - master
+  - release/*
+rules:
+  forcePushProtectedBranch:
+    enabled: true
+    severity: block
+  directCommitToProtectedBranch:
+    enabled: true
+    severity: warn
+  largePush:
+    enabled: true
+    severity: warn
+    options:
+      threshold: 50
+  rebaseSharedBranch:
+    enabled: true
+    severity: warn
+  deleteBranchWithOpenPR:
+    enabled: true
+    severity: warn
+  hardResetWithChanges:
+    enabled: true
+    severity: warn
+  secretDetection:
+    enabled: false
+    severity: block
+  wipCommit:
+    enabled: true
+    severity: block
+  commitMessageFormat:
+    enabled: false
+    severity: warn
+  mergeIntoProtectedBranch:
+    enabled: true
+    severity: warn
+  tagDeletion:
+    enabled: true
+    severity: warn
+  stashDrop:
+    enabled: true
+    severity: warn
+  amendPublishedCommit:
+    enabled: true
+    severity: warn
+ai:
+  provider: null
