@@ -6,61 +6,61 @@ import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { useTranslations } from 'next-intl';
 
 export async function generateMetadata(
-    {params: {locale}}: { params: { locale: string }}
+    { params: { locale } }: { params: { locale: string } }
 ) {
     const t = await getTranslations();
-    const {person, about, social } = renderContent(t);
-	const title = about.title;
-	const description = about.description;
-	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
+    const { person, about, social } = renderContent(t);
+    const title = about.title;
+    const description = about.description;
+    const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
 
-	return {
-		title,
-		description,
-		openGraph: {
-			title,
-			description,
-			type: 'website',
-			url: `https://${baseURL}/${locale}/about`,
-			images: [
-				{
-					url: ogImage,
-					alt: title,
-				},
-			],
-		},
-		twitter: {
-			card: 'summary_large_image',
-			title,
-			description,
-			images: [ogImage],
-		},
-	};
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            type: 'website',
+            url: `https://${baseURL}/${locale}/about`,
+            images: [
+                {
+                    url: ogImage,
+                    alt: title,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: [ogImage],
+        },
+    };
 }
 
 export default function About(
-    { params: {locale}}: { params: { locale: string }}
+    { params: { locale } }: { params: { locale: string } }
 ) {
     unstable_setRequestLocale(locale);
     const t = useTranslations();
-    const {person, about, social } = renderContent(t);
+    const { person, about, social } = renderContent(t);
     const structure = [
-        { 
+        {
             title: about.intro.title,
             display: about.intro.display,
             items: []
         },
-        { 
+        {
             title: about.work.title,
             display: about.work.display,
             items: about.work.experiences.map(experience => experience.company)
         },
-        { 
+        {
             title: about.studies.title,
             display: about.studies.display,
             items: about.studies.institutions.map(institution => institution.name)
         },
-        { 
+        {
             title: about.technical.title,
             display: about.technical.display,
             items: about.technical.skills.map(skill => skill.title)
@@ -92,7 +92,7 @@ export default function About(
                     }),
                 }}
             />
-            { about.tableOfContent.display && (
+            {about.tableOfContent.display && (
                 <Flex
                     style={{ left: '0', top: '50%', transform: 'translateY(-50%)' }}
                     position="fixed"
@@ -106,23 +106,23 @@ export default function About(
             <Flex
                 fillWidth
                 mobileDirection="column" justifyContent="center">
-                { about.avatar.display && (
+                {about.avatar.display && (
                     <Flex
                         className={styles.avatar}
                         minWidth="160" paddingX="l" paddingBottom="xl" gap="m"
                         flex={3} direction="column" alignItems="center">
                         <Avatar
                             src={person.avatar}
-                            size="xl"/>
+                            size="xl" />
                         <Flex
                             gap="8"
                             alignItems="center">
                             <Icon
                                 onBackground="accent-weak"
-                                name="globe"/>
+                                name="globe" />
                             {person.location}
                         </Flex>
-                        { person.languages.length > 0 && (
+                        {person.languages.length > 0 && (
                             <Flex
                                 wrap
                                 gap="8">
@@ -159,7 +159,7 @@ export default function About(
                                 <Flex paddingLeft="12">
                                     <Icon
                                         name="calendar"
-                                        onBackground="brand-weak"/>
+                                        onBackground="brand-weak" />
                                 </Flex>
                                 <Flex
                                     paddingX="8">
@@ -169,7 +169,7 @@ export default function About(
                                     href={about.calendar.link}
                                     data-border="rounded"
                                     variant="tertiary"
-                                    icon="chevronRight"/>
+                                    icon="chevronRight" />
                             </Flex>
                         )}
                         <Heading
@@ -195,14 +195,14 @@ export default function About(
                                             prefixIcon={item.icon}
                                             label={item.name}
                                             size="s"
-                                            variant="tertiary"/>
+                                            variant="tertiary" />
                                     )
                                 ))}
                             </Flex>
                         )}
                     </Flex>
 
-                    { about.intro.display && (
+                    {about.intro.display && (
                         <Flex
                             direction="column"
                             textVariant="body-default-l"
@@ -211,7 +211,7 @@ export default function About(
                         </Flex>
                     )}
 
-                    { about.work.display && (
+                    {about.work.display && (
                         <>
                             <Heading
                                 as="h2"
@@ -278,7 +278,7 @@ export default function About(
                                                             radius="m"
                                                             sizes={image.width.toString()}
                                                             alt={image.alt}
-                                                            src={image.src}/>
+                                                            src={image.src} />
                                                     </Flex>
                                                 ))}
                                             </Flex>
@@ -289,7 +289,7 @@ export default function About(
                         </>
                     )}
 
-                    { about.studies.display && (
+                    {about.studies.display && (
                         <>
                             <Heading
                                 as="h2"
@@ -322,7 +322,7 @@ export default function About(
                         </>
                     )}
 
-                    { about.technical.display && (
+                    {about.technical.display && (
                         <>
                             <Heading
                                 as="h2"
@@ -331,43 +331,74 @@ export default function About(
                                 {about.technical.title}
                             </Heading>
                             <Flex
+                                fillWidth
                                 direction="column"
-                                fillWidth gap="l">
-                                {about.technical.skills.map((skill, index) => (
-                                    <Flex
-                                        key={`${skill}-${index}`}
-                                        fillWidth gap="4"
-                                        direction="column">
-                                        <Text
-                                            variant="heading-strong-l">
-                                            {skill.title}
+                                gap="xl">
+                                {[
+                                    {
+                                        category: "Languages",
+                                        skills: [
+                                            { name: "JavaScript", icon: "code" },
+                                            { name: "TypeScript", icon: "code" },
+                                            { name: "HTML", icon: "code" },
+                                            { name: "CSS", icon: "code" },
+                                            { name: "SQL", icon: "code" },
+                                        ]
+                                    },
+                                    {
+                                        category: "Frontend & Mobile",
+                                        skills: [
+                                            { name: "React", icon: "code" },
+                                            { name: "Next.js", icon: "code" },
+                                            { name: "React Native", icon: "smartphone" },
+                                            { name: "Expo", icon: "smartphone" },
+                                            { name: "Tailwind CSS", icon: "code" },
+                                        ]
+                                    },
+                                    {
+                                        category: "Backend & Database",
+                                        skills: [
+                                            { name: "Node.js", icon: "server" },
+                                            { name: "Express.js", icon: "server" },
+                                            { name: "MongoDB", icon: "server" },
+                                            { name: "MySQL", icon: "server" },
+                                            { name: "REST APIs", icon: "code" },
+                                        ]
+                                    },
+                                    {
+                                        category: "DevOps & Tools",
+                                        skills: [
+                                            { name: "AWS", icon: "globe" },
+                                            { name: "Docker", icon: "grid" },
+                                            { name: "Git", icon: "github" },
+                                            { name: "CI/CD", icon: "refresh" },
+                                            { name: "UI/UX Design", icon: "briefcase" },
+                                            { name: "Kubernetes", icon: "server" },
+                                            { name: "jenkins", icon: "refresh" },
+                                        ]
+                                    }
+                                ].map((group, gIndex) => (
+                                    <Flex key={gIndex} direction="column" gap="m">
+                                        <Text variant="heading-strong-s" onBackground="neutral-weak">
+                                            {group.category}
                                         </Text>
-                                        <Text
-                                            variant="body-default-m"
-                                            onBackground="neutral-weak">
-                                            {skill.description}
-                                        </Text>
-                                        {skill.images && skill.images.length > 0 && (
-                                            <Flex
-                                                fillWidth paddingTop="m" gap="12"
-                                                wrap>
-                                                {skill.images.map((image, index) => (
-                                                    <Flex
-                                                        key={index}
-                                                        border="neutral-medium"
-                                                        borderStyle="solid-1"
-                                                        radius="m"
-                                                        minWidth={image.width} height={image.height}>
-                                                        <SmartImage
-                                                            enlarge
-                                                            radius="m"
-                                                            sizes={image.width.toString()}
-                                                            alt={image.alt}
-                                                            src={image.src}/>
-                                                    </Flex>
-                                                ))}
-                                            </Flex>
-                                        )}
+                                        <Flex wrap gap="12">
+                                            {group.skills.map((skill, sIndex) => (
+                                                <Flex
+                                                    key={sIndex}
+                                                    alignItems="center"
+                                                    gap="8"
+                                                    paddingY="8"
+                                                    paddingX="12"
+                                                    radius="m"
+                                                    border="neutral-medium"
+                                                    borderStyle="solid-1"
+                                                    background="surface">
+                                                    <Icon name={skill.icon} size="s" onBackground="brand-weak" />
+                                                    <Text variant="body-default-s">{skill.name}</Text>
+                                                </Flex>
+                                            ))}
+                                        </Flex>
                                     </Flex>
                                 ))}
                             </Flex>

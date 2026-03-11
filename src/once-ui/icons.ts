@@ -18,7 +18,14 @@ import {
 	HiMiniGlobeAsiaAustralia,
 	HiEnvelope,
 	HiCalendarDays,
-	HiClipboard
+	HiClipboard,
+	HiCommandLine,
+	HiDevicePhoneMobile,
+	HiChartBar,
+	HiChatBubbleLeftRight,
+	HiShieldCheck,
+	HiServerStack,
+	HiBriefcase
 } from "react-icons/hi2";
 
 import {
@@ -38,7 +45,7 @@ import {
 
 export const iconLibrary: Record<string, IconType> = {
 	chevronUp: HiChevronUp,
-    chevronDown: HiChevronDown,
+	chevronDown: HiChevronDown,
 	chevronRight: HiChevronRight,
 	chevronLeft: HiChevronLeft,
 	refresh: HiOutlineArrowPath,
@@ -63,5 +70,13 @@ export const iconLibrary: Record<string, IconType> = {
 	github: FaGithub,
 	linkedin: FaLinkedin,
 	x: FaXTwitter,
-	clipboard: HiClipboard
+	clipboard: HiClipboard,
+	// Service icons
+	code: HiCommandLine,
+	smartphone: HiDevicePhoneMobile,
+	barChart: HiChartBar,
+	chat: HiChatBubbleLeftRight,
+	shield: HiShieldCheck,
+	server: HiServerStack,
+	briefcase: HiBriefcase,
 };

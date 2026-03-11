@@ -1,5 +1,5 @@
 import { getPosts } from '@/app/utils/utils';
-import { Flex } from '@/once-ui/components';
+import { Flex, Icon, Text } from '@/once-ui/components';
 
 import { ProjectCard } from '@/components';
 
@@ -18,6 +18,43 @@ export function Projects({ range, locale }: ProjectsProps) {
     const displayedProjects = range
         ? sortedProjects.slice(range[0] - 1, range[1] ?? sortedProjects.length)
         : sortedProjects;
+
+    if (displayedProjects.length === 0) {
+        return (
+            <Flex
+                fillWidth
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                gap="m"
+                paddingY="xl"
+                paddingX="l"
+                radius="l"
+                border="neutral-medium"
+                borderStyle="solid-1"
+                background="surface">
+                <Flex
+                    padding="m"
+                    radius="full"
+                    background="neutral-medium"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ width: '56px', height: '56px' }}>
+                    <Icon name="grid" size="m" onBackground="neutral-weak" />
+                </Flex>
+                <Flex direction="column" gap="4" alignItems="center">
+                    <Text variant="heading-strong-m">Projects coming soon</Text>
+                    <Text
+                        variant="body-default-s"
+                        onBackground="neutral-weak"
+                        align="center"
+                        wrap="balance">
+                        I'm currently building some exciting projects. Stay tuned.
+                    </Text>
+                </Flex>
+            </Flex>
+        );
+    }
 
     return (
         <Flex

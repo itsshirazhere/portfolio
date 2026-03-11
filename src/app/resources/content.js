@@ -6,7 +6,7 @@ const person = {
   get name() {
     return `${this.firstName} ${this.lastName}`;
   },
-  role: "Software Developer",
+  role: "Builder & Entrepreneur",
   avatar: "/images/avatar.jpg",
   location: "Asia/Kolkata", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
   languages: ["English", "Malayalam", "Hindi"], // optional: Leave the array empty if you don't want to display languages
@@ -29,7 +29,7 @@ const social = [
   {
     name: "GitHub",
     icon: "github",
-    link: "https://github.com/Shiraz-2022",
+    link: "https://github.com/itsshirazhere",
   },
   {
     name: "LinkedIn",
@@ -50,22 +50,29 @@ const social = [
 
 const home = {
   label: "Home",
-  title: `${person.name}'s Portfolio`,
-  description: `Portfolio website showcasing my work as a ${person.role}`,
-  headline: <>Software Developer</>,
+  title: `${person.name} — Builder & Entrepreneur`,
+  description: `Shiraz builds scalable software, automates business workflows, and helps founders ship faster.`,
+  headline: <>Engineer. Builder. Problem Solver.</>,
   subline: (
     <>
-      Hi, I'm Shiraz Yousuf — a proactive software developer who builds
-      solutions, not just projects. I specialize in full-stack development, love
-      solving real-world problems, and quickly adapt to new technologies.
+      Hi, I'm Shiraz — I build scalable software and help businesses grow
+      through smart technology. From full-stack apps and AWS infrastructure to
+      Meta Ads and AI automation, I turn ideas into results.
     </>
   ),
+  badges: [
+    "Full-Stack Dev",
+    "AI Automation",
+    "Meta Ads",
+    "AWS Infra Setup",
+    // "AWS Infra Cost Optimization",
+  ],
 };
 
 const about = {
   label: "About",
   title: "About me",
-  description: `Meet ${person.name}, ${person.role} from ${person.location}`,
+  description: `Meet ${person.name} — a builder and entrepreneur who turns ideas into scalable products.`,
   tableOfContent: {
     display: true,
     subItems: false,
@@ -82,17 +89,18 @@ const about = {
     title: "Introduction",
     description: (
       <>
-        Shiraz Yousuf is a tech enthusiast and software developer passionate
-        about solving real-world problems through innovative technology. Based
-        in Kerala, he specializes in building scalable applications that blend
-        functionality with intuitive user experiences. His expertise spans
-        full-stack development, AI-driven solutions, and creating impactful
-        projects that merge creativity and technology.
+        I'm Shiraz — an entrepreneur who lives to build. Whether it's a software
+        product or a business strategy, I thrive on the process of creating
+        something from nothing. My core drive is to help people achieve their
+        goals faster and more efficiently through smart technology and efficient
+        processes. When I'm not building, you'll likely find me on the football
+        pitch, hitting the gym, or exploring new ways to solve real-world
+        problems.
       </>
     ),
   },
   work: {
-    display: true, // set to false to hide this section
+    display: false, // set to false to hide this section
     title: "Work Experience",
     experiences: [
       {
@@ -378,4 +386,73 @@ const gallery = {
   ],
 };
 
-export { person, social, newsletter, home, about, blog, work, gallery };
+const services = {
+  label: "Services",
+  title: "Services & Solutions",
+  description: `Work with ${person.name} — tech & business services tailored to your needs`,
+  sections: [
+    {
+      title: "Tech & Development",
+      subtitle: "End-to-end software engineering services",
+      items: [
+        {
+          icon: "code",
+          title: "Full-Stack Web Development",
+          description:
+            "Build fast, scalable web applications using React, Next.js, and Node.js. From MVPs to production-grade platforms.",
+          tags: ["React", "Next.js", "Node.js", "TypeScript"],
+        },
+        {
+          icon: "smartphone",
+          title: "Mobile App Development",
+          description:
+            "Cross-platform iOS and Android apps with React Native and Expo — clean UX, real-time features, and app store ready.",
+          tags: ["React Native", "Expo", "iOS", "Android"],
+        },
+        // {
+        //   icon: "shield",
+        //   title: "Infrastructure Cost Optimization",
+        //   description:
+        //       "Audit your cloud spend, eliminate waste, right-size resources, and implement reserved/spot strategies to cut AWS bills significantly.",
+        //   tags: ["AWS", "Cost Analysis", "Reserved Instances"],
+        // },
+        {
+          icon: "server",
+          title: "AWS Infrastructure Setup",
+          description:
+              "Design and deploy production-ready AWS environments — VPCs, EC2, RDS, S3, IAM, load balancers, and full CI/CD pipelines.",
+          tags: ["AWS", "Terraform", "Docker", "CI/CD", "Kubernetes"],
+        },
+      ],
+    },
+    {
+      title: "Business & Growth",
+      subtitle: "Technology-driven services to scale your business",
+      items: [
+        {
+          icon: "barChart",
+          title: "Meta Ads Setup & Management",
+          description:
+            "End-to-end Facebook and Instagram ad campaigns — audience research, creative strategy, A/B testing, and performance reporting.",
+          tags: ["Facebook Ads", "Instagram Ads", "Retargeting", "ROAS"],
+        },
+        {
+          icon: "chat",
+          title: "WhatsApp Automation",
+          description:
+            "Automate customer conversations, order updates, and support flows using the WhatsApp Business API and custom workflows.",
+          tags: ["WhatsApp API", "Chatbots", "Meta API", "Automation"],
+        },
+        {
+          icon: "refresh",
+          title: "AI Automation",
+          description:
+            "Leverage LLMs and AI agents to automate repetitive tasks, extract data from documents, and enhance customer support with intelligent responses.",
+          tags: ["LLMs", "AI Agents", "OpenAI", "Workflow Automation"],
+        },
+      ],
+    },
+  ],
+};
+
+export { person, social, newsletter, home, about, blog, work, gallery, services };
