@@ -1,15 +1,14 @@
 import React from 'react';
-import { Heading, Flex, Text, Icon, Badge, RevealFx } from '@/once-ui/components';
-import { baseURL, renderContent } from '@/app/resources';
-import { ContactButton } from '@/components';
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
-import { useTranslations } from 'next-intl';
+import { Heading, Flex, Text, RevealFx } from '@/once-ui/components';
+import { baseURL } from '@/app/resources';
+import { ContactButton, ServiceCard } from '@/components';
+import { unstable_setRequestLocale } from 'next-intl/server';
+import { getContent } from '@/lib/getContent';
 
 export async function generateMetadata(
     { params: { locale } }: { params: { locale: string } }
 ) {
-    const t = await getTranslations();
-    const { services } = renderContent(t);
+    const { services } = await getContent();
     const title = services.title;
     const description = services.description;
     const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
@@ -27,12 +26,11 @@ export async function generateMetadata(
     };
 }
 
-export default function Services(
+export default async function Services(
     { params: { locale } }: { params: { locale: string } }
 ) {
     unstable_setRequestLocale(locale);
-    const t = useTranslations();
-    const { services } = renderContent(t);
+    const { services } = await getContent();
 
     return (
         <Flex
@@ -92,77 +90,19 @@ export default function Services(
                             wrap
                             gap="m">
                             {section.items.map((item: any, iIdx: number) => (
-                                <Flex
+                                <ServiceCard
                                     key={iIdx}
-                                    direction="column"
-                                    gap="m"
-                                    padding="l"
-                                    radius="l"
-                                    border="neutral-medium"
-                                    borderStyle="solid-1"
-                                    background="surface"
-                                    style={{
-                                        flex: '1 1 300px',
-                                        minWidth: '280px',
-                                        maxWidth: '480px',
-                                        transition: 'border-color 0.2s ease, transform 0.2s ease',
-                                    }}
-                                    className="service-card">
-
-                                    {/* Icon + Title */}
-                                    <Flex direction="row" alignItems="center" gap="m">
-                                        <Flex
-                                            padding="s"
-                                            radius="m"
-                                            background="brand-medium"
-                                            alignItems="center"
-                                            justifyContent="center"
-                                            style={{ width: '44px', height: '44px', flexShrink: 0 }}>
-                                            <Icon
-                                                name={item.icon}
-                                                size="m"
-                                                onBackground="brand-strong"
-                                            />
-                                        </Flex>
-                                        <Heading as="h3" variant="heading-strong-m">
-                                            {item.title}
-                                        </Heading>
-                                    </Flex>
-
-                                    {/* Description */}
-                                    <Text
-                                        variant="body-default-s"
-                                        onBackground="neutral-weak"
-                                        style={{ lineHeight: '1.65', flexGrow: 1 }}>
-                                        {item.description}
-                                    </Text>
-
-                                    {/* Tags */}
-                                    <Flex gap="8" wrap>
-                                        {item.tags.map((tag: string, tIdx: number) => (
-                                            <Badge
-                                                key={tIdx}
-                                                title={tag}
-                                            />
-                                        ))}
-                                    </Flex>
-
-                                    {/* CTA */}
-                                    <ContactButton
-                                        variant="secondary"
-                                        size="s"
-                                        suffixIcon="arrowUpRight"
-                                        defaultSubject={`Inquiry: ${item.title}`}>
-                                        Get in touch
-                                    </ContactButton>
-                                </Flex>
+                                    icon={item.icon}
+                                    title={item.title}
+                                    description={item.description}
+                                    tags={item.tags} />
                             ))}
                         </Flex>
                     </Flex>
                 </RevealFx>
             ))}
 
-            {/* Bottom CTA strip */}
+            {/* Bottom CTA */}
             <RevealFx translateY="16" delay={0.4} fillWidth>
                 <Flex
                     fillWidth
@@ -175,24 +115,23 @@ export default function Services(
                     alignItems="center"
                     gap="m">
                     <Heading as="h2" variant="display-strong-s" align="center">
-                        Not sure which service fits?
+                        Not sure where to start?
                     </Heading>
                     <Text
                         variant="body-default-m"
                         onBackground="neutral-weak"
                         align="center"
                         wrap="balance">
-                        Let's chat. I'll figure out exactly what you need and how I can help.
+                        Tell me what you're building. I'll recommend the best approach and give you a realistic timeline and scope.
                     </Text>
                     <ContactButton
                         variant="primary"
                         size="l"
                         suffixIcon="arrowUpRight">
-                        Send me a message
+                        Let's talk
                     </ContactButton>
                 </Flex>
             </RevealFx>
-
         </Flex>
     );
 }

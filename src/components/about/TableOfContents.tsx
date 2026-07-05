@@ -10,15 +10,13 @@ interface TableOfContentsProps {
         display: boolean;
         items: string[];
     }[];
-    about: {
-        tableOfContent: {
-            display: boolean;
-            subItems: boolean;
-        };
+    tableOfContent: {
+        display: boolean;
+        subItems: boolean;
     };
 }
 
-const TableOfContents: React.FC<TableOfContentsProps> = ({ structure, about }) => {
+const TableOfContents: React.FC<TableOfContentsProps> = ({ structure, tableOfContent: about }) => {
     const scrollTo = (id: string, offset: number) => {
         const element = document.getElementById(id);
         if (element) {
@@ -32,7 +30,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ structure, about }) =
         }
     };
 
-    if (!about.tableOfContent.display) return null;
+    if (!about.display) return null;
 
     return (
         <Flex
@@ -63,7 +61,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ structure, about }) =
                             {section.title}
                         </Text>
                     </Flex>
-                    {about.tableOfContent.subItems && (
+                    {about.subItems && (
                         <>
                             {section.items.map((item, itemIndex) => (
                                 <Flex

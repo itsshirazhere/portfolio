@@ -1,15 +1,14 @@
 import { Avatar, Button, Flex, Heading, Icon, IconButton, SmartImage, Tag, Text } from '@/once-ui/components';
-import { baseURL, renderContent } from '@/app/resources';
+import { baseURL } from '@/app/resources';
 import TableOfContents from '@/components/about/TableOfContents';
-import styles from '@/components/about/about.module.scss'
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
-import { useTranslations } from 'next-intl';
+import styles from '@/components/about/about.module.scss';
+import { unstable_setRequestLocale } from 'next-intl/server';
+import { getContent } from '@/lib/getContent';
 
 export async function generateMetadata(
     { params: { locale } }: { params: { locale: string } }
 ) {
-    const t = await getTranslations();
-    const { person, about, social } = renderContent(t);
+    const { person, about } = await getContent();
     const title = about.title;
     const description = about.description;
     const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
@@ -22,12 +21,7 @@ export async function generateMetadata(
             description,
             type: 'website',
             url: `https://${baseURL}/${locale}/about`,
-            images: [
-                {
-                    url: ogImage,
-                    alt: title,
-                },
-            ],
+            images: [{ url: ogImage, alt: title }],
         },
         twitter: {
             card: 'summary_large_image',
@@ -38,38 +32,42 @@ export async function generateMetadata(
     };
 }
 
-export default function About(
+export default async function About(
     { params: { locale } }: { params: { locale: string } }
 ) {
     unstable_setRequestLocale(locale);
-    const t = useTranslations();
-    const { person, about, social } = renderContent(t);
+    const { person, about, social } = await getContent();
+
     const structure = [
-        {
-            title: about.intro.title,
-            display: about.intro.display,
-            items: []
-        },
+        { title: about.intro.title, display: about.intro.display, items: [] },
         {
             title: about.work.title,
             display: about.work.display,
-            items: about.work.experiences.map(experience => experience.company)
+            items: about.work.experiences.map((e: any) => e.company),
         },
         {
             title: about.studies.title,
             display: about.studies.display,
-            items: about.studies.institutions.map(institution => institution.name)
+            items: about.studies.institutions.map((i: any) => i.name),
         },
         {
             title: about.technical.title,
             display: about.technical.display,
-            items: about.technical.skills.map(skill => skill.title)
+            items: [],
         },
-    ]
+    ];
+
+    const competencies = [
+        { name: "Full-Stack Development", icon: "code" },
+        { name: "Cloud & DevOps", icon: "globe" },
+        { name: "Mobile Development", icon: "smartphone" },
+        { name: "AI / LLM Integration", icon: "refresh" },
+        { name: "Growth & Automation", icon: "barChart" },
+        { name: "UI/UX Design", icon: "briefcase" },
+    ];
+
     return (
-        <Flex
-            fillWidth maxWidth="m"
-            direction="column">
+        <Flex fillWidth maxWidth="m" direction="column">
             <script
                 type="application/ld+json"
                 suppressHydrationWarning
@@ -79,67 +77,55 @@ export default function About(
                         '@type': 'Person',
                         name: person.name,
                         jobTitle: person.role,
-                        description: about.intro.description,
+                        description: typeof about.intro.description === 'string'
+                            ? about.intro.description
+                            : `${person.name} — ${person.role}`,
                         url: `https://${baseURL}/about`,
-                        image: `${baseURL}/images/${person.avatar}`,
+                        image: `${baseURL}${person.avatar}`,
                         sameAs: social
-                            .filter((item) => item.link && !item.link.startsWith('mailto:')) // Filter out empty links and email links
-                            .map((item) => item.link),
+                            .filter((item: any) => item.link && !item.link.startsWith('mailto:'))
+                            .map((item: any) => item.link),
                         worksFor: {
                             '@type': 'Organization',
-                            name: about.work.experiences[0].company || ''
+                            name: about.work.experiences[0]?.company || '',
                         },
                     }),
                 }}
             />
+
             {about.tableOfContent.display && (
                 <Flex
                     style={{ left: '0', top: '50%', transform: 'translateY(-50%)' }}
                     position="fixed"
                     paddingLeft="24" gap="32"
                     direction="column" hide="s">
-                    <TableOfContents
-                        structure={structure}
-                        about={about} />
+                    <TableOfContents structure={structure} tableOfContent={about.tableOfContent} />
                 </Flex>
             )}
-            <Flex
-                fillWidth
-                mobileDirection="column" justifyContent="center">
+
+            <Flex fillWidth mobileDirection="column" justifyContent="center">
                 {about.avatar.display && (
                     <Flex
                         className={styles.avatar}
                         minWidth="160" paddingX="l" paddingBottom="xl" gap="m"
                         flex={3} direction="column" alignItems="center">
-                        <Avatar
-                            src={person.avatar}
-                            size="xl" />
-                        <Flex
-                            gap="8"
-                            alignItems="center">
-                            <Icon
-                                onBackground="accent-weak"
-                                name="globe" />
+                        <Avatar src={person.avatar} size="xl" />
+                        <Flex gap="8" alignItems="center">
+                            <Icon onBackground="accent-weak" name="globe" />
                             {person.location}
                         </Flex>
                         {person.languages.length > 0 && (
-                            <Flex
-                                wrap
-                                gap="8">
-                                {person.languages.map((language, index) => (
-                                    <Tag
-                                        key={index}
-                                        size="l">
-                                        {language}
-                                    </Tag>
+                            <Flex wrap gap="8">
+                                {person.languages.map((language: string, index: number) => (
+                                    <Tag key={index} size="l">{language}</Tag>
                                 ))}
                             </Flex>
                         )}
                     </Flex>
                 )}
-                <Flex
-                    className={styles.blockAlign}
-                    fillWidth flex={9} maxWidth={40} direction="column">
+
+                <Flex className={styles.blockAlign} fillWidth flex={9} maxWidth={40} direction="column">
+                    {/* Header */}
                     <Flex
                         id={about.intro.title}
                         fillWidth minHeight="160"
@@ -151,20 +137,15 @@ export default function About(
                                 style={{
                                     backdropFilter: 'blur(var(--static-space-1))',
                                     border: '1px solid var(--brand-alpha-medium)',
-                                    width: 'fit-content'
+                                    width: 'fit-content',
                                 }}
                                 alpha="brand-weak" radius="full"
                                 fillWidth padding="4" gap="8" marginBottom="m"
                                 alignItems="center">
                                 <Flex paddingLeft="12">
-                                    <Icon
-                                        name="calendar"
-                                        onBackground="brand-weak" />
+                                    <Icon name="calendar" onBackground="brand-weak" />
                                 </Flex>
-                                <Flex
-                                    paddingX="8">
-                                    Schedule a call
-                                </Flex>
+                                <Flex paddingX="8">Schedule a call</Flex>
                                 <IconButton
                                     href={about.calendar.link}
                                     data-border="rounded"
@@ -172,9 +153,7 @@ export default function About(
                                     icon="chevronRight" />
                             </Flex>
                         )}
-                        <Heading
-                            className={styles.textAlign}
-                            variant="display-strong-xl">
+                        <Heading className={styles.textAlign} variant="display-strong-xl">
                             {person.name}
                         </Heading>
                         <Text
@@ -184,10 +163,8 @@ export default function About(
                             {person.role}
                         </Text>
                         {social.length > 0 && (
-                            <Flex
-                                className={styles.blockAlign}
-                                paddingTop="20" paddingBottom="8" gap="8" wrap>
-                                {social.map((item) => (
+                            <Flex className={styles.blockAlign} paddingTop="20" paddingBottom="8" gap="8" wrap>
+                                {social.map((item: any) => (
                                     item.link && (
                                         <Button
                                             key={item.name}
@@ -202,15 +179,19 @@ export default function About(
                         )}
                     </Flex>
 
+                    {/* Intro */}
                     {about.intro.display && (
                         <Flex
                             direction="column"
                             textVariant="body-default-l"
                             fillWidth gap="m" marginBottom="xl">
-                            {about.intro.description}
+                            {String(about.intro.description).split('\n\n').map((para: string, i: number) => (
+                                <Text key={i} variant="body-default-l">{para}</Text>
+                            ))}
                         </Flex>
                     )}
 
+                    {/* Work Experience */}
                     {about.work.display && (
                         <>
                             <Heading
@@ -220,19 +201,16 @@ export default function About(
                                 marginBottom="m">
                                 {about.work.title}
                             </Heading>
-                            <Flex
-                                direction="column"
-                                fillWidth gap="l" marginBottom="40">
-                                {about.work.experiences.map((experience, index) => (
+                            <Flex direction="column" fillWidth gap="l" marginBottom="40">
+                                {about.work.experiences.map((experience: any, index: number) => (
                                     <Flex
-                                        key={`${experience.company}-${experience.role}-${index}`}
-                                        fillWidth
-                                        direction="column">
+                                        key={`${experience.company}-${index}`}
+                                        fillWidth direction="column">
                                         <Flex
-                                            fillWidth
-                                            justifyContent="space-between"
-                                            alignItems="flex-end"
-                                            marginBottom="4">
+                                            className={styles.experienceHeader}
+                                            fillWidth justifyContent="space-between"
+                                            alignItems="flex-end" mobileDirection="column"
+                                            gap="4" marginBottom="4">
                                             <Text
                                                 id={experience.company}
                                                 variant="heading-strong-l">
@@ -250,32 +228,30 @@ export default function About(
                                             marginBottom="m">
                                             {experience.role}
                                         </Text>
-                                        <Flex
-                                            as="ul"
-                                            direction="column" gap="16">
-                                            {experience.achievements.map((achievement: string, index: any) => (
+                                        <Flex as="ul" direction="column" gap="16">
+                                            {experience.achievements.map((achievement: any, idx: number) => (
                                                 <Text
                                                     as="li"
                                                     variant="body-default-m"
-                                                    key={`${experience.company}-${index}`}>
+                                                    key={`${experience.company}-${idx}`}>
                                                     {achievement}
                                                 </Text>
                                             ))}
                                         </Flex>
-                                        {experience.images.length > 0 && (
-                                            <Flex
-                                                fillWidth paddingTop="m" paddingLeft="40"
-                                                wrap>
-                                                {experience.images.map((image, index) => (
+                                        {experience.images && experience.images.length > 0 && (
+                                            <Flex fillWidth paddingTop="m" gap="12" wrap>
+                                                {experience.images.map((image: any, idx: number) => (
                                                     <Flex
-                                                        key={index}
+                                                        key={idx}
                                                         border="neutral-medium"
                                                         borderStyle="solid-1"
                                                         radius="m"
-                                                        minWidth={image.width} height={image.height}>
+                                                        maxWidth={image.width}
+                                                        fillWidth>
                                                         <SmartImage
                                                             enlarge
                                                             radius="m"
+                                                            aspectRatio={`${image.width} / ${image.height}`}
                                                             sizes={image.width.toString()}
                                                             alt={image.alt}
                                                             src={image.src} />
@@ -289,6 +265,7 @@ export default function About(
                         </>
                     )}
 
+                    {/* Education */}
                     {about.studies.display && (
                         <>
                             <Heading
@@ -298,22 +275,15 @@ export default function About(
                                 marginBottom="m">
                                 {about.studies.title}
                             </Heading>
-                            <Flex
-                                direction="column"
-                                fillWidth gap="l" marginBottom="40">
-                                {about.studies.institutions.map((institution, index) => (
+                            <Flex direction="column" fillWidth gap="l" marginBottom="40">
+                                {about.studies.institutions.map((institution: any, index: number) => (
                                     <Flex
                                         key={`${institution.name}-${index}`}
-                                        fillWidth gap="4"
-                                        direction="column">
-                                        <Text
-                                            id={institution.name}
-                                            variant="heading-strong-l">
+                                        fillWidth gap="4" direction="column">
+                                        <Text id={institution.name} variant="heading-strong-l">
                                             {institution.name}
                                         </Text>
-                                        <Text
-                                            variant="heading-default-xs"
-                                            onBackground="neutral-weak">
+                                        <Text variant="heading-default-xs" onBackground="neutral-weak">
                                             {institution.description}
                                         </Text>
                                     </Flex>
@@ -322,83 +292,30 @@ export default function About(
                         </>
                     )}
 
+                    {/* Technical Skills */}
                     {about.technical.display && (
                         <>
                             <Heading
                                 as="h2"
                                 id={about.technical.title}
-                                variant="display-strong-s" marginBottom="40">
+                                variant="display-strong-s"
+                                marginBottom="40">
                                 {about.technical.title}
                             </Heading>
-                            <Flex
-                                fillWidth
-                                direction="column"
-                                gap="xl">
-                                {[
-                                    {
-                                        category: "Languages",
-                                        skills: [
-                                            { name: "JavaScript", icon: "code" },
-                                            { name: "TypeScript", icon: "code" },
-                                            { name: "HTML", icon: "code" },
-                                            { name: "CSS", icon: "code" },
-                                            { name: "SQL", icon: "code" },
-                                        ]
-                                    },
-                                    {
-                                        category: "Frontend & Mobile",
-                                        skills: [
-                                            { name: "React", icon: "code" },
-                                            { name: "Next.js", icon: "code" },
-                                            { name: "React Native", icon: "smartphone" },
-                                            { name: "Expo", icon: "smartphone" },
-                                            { name: "Tailwind CSS", icon: "code" },
-                                        ]
-                                    },
-                                    {
-                                        category: "Backend & Database",
-                                        skills: [
-                                            { name: "Node.js", icon: "server" },
-                                            { name: "Express.js", icon: "server" },
-                                            { name: "MongoDB", icon: "server" },
-                                            { name: "MySQL", icon: "server" },
-                                            { name: "REST APIs", icon: "code" },
-                                        ]
-                                    },
-                                    {
-                                        category: "DevOps & Tools",
-                                        skills: [
-                                            { name: "AWS", icon: "globe" },
-                                            { name: "Docker", icon: "grid" },
-                                            { name: "Git", icon: "github" },
-                                            { name: "CI/CD", icon: "refresh" },
-                                            { name: "UI/UX Design", icon: "briefcase" },
-                                            { name: "Kubernetes", icon: "server" },
-                                            { name: "jenkins", icon: "refresh" },
-                                        ]
-                                    }
-                                ].map((group, gIndex) => (
-                                    <Flex key={gIndex} direction="column" gap="m">
-                                        <Text variant="heading-strong-s" onBackground="neutral-weak">
-                                            {group.category}
-                                        </Text>
-                                        <Flex wrap gap="12">
-                                            {group.skills.map((skill, sIndex) => (
-                                                <Flex
-                                                    key={sIndex}
-                                                    alignItems="center"
-                                                    gap="8"
-                                                    paddingY="8"
-                                                    paddingX="12"
-                                                    radius="m"
-                                                    border="neutral-medium"
-                                                    borderStyle="solid-1"
-                                                    background="surface">
-                                                    <Icon name={skill.icon} size="s" onBackground="brand-weak" />
-                                                    <Text variant="body-default-s">{skill.name}</Text>
-                                                </Flex>
-                                            ))}
-                                        </Flex>
+                            <Flex fillWidth wrap gap="12">
+                                {competencies.map((competency, index) => (
+                                    <Flex
+                                        key={index}
+                                        alignItems="center"
+                                        gap="8"
+                                        paddingY="8"
+                                        paddingX="12"
+                                        radius="m"
+                                        border="neutral-medium"
+                                        borderStyle="solid-1"
+                                        background="surface">
+                                        <Icon name={competency.icon} size="s" onBackground="brand-weak" />
+                                        <Text variant="body-default-s">{competency.name}</Text>
                                     </Flex>
                                 ))}
                             </Flex>

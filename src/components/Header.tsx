@@ -133,14 +133,14 @@ export const Header = () => {
                                     <Flex paddingX="2" hide="s">{work.label}</Flex>
                                 </ToggleButton>
                             )}
-                            {routes['/blog'] && (
+                            {/* {routes['/blog'] && (
                                 <ToggleButton
                                     prefixIcon="book"
                                     href={`/${params?.locale}/blog`}
                                     selected={pathname.startsWith('/blog')}>
                                     <Flex paddingX="2" hide="s">{blog.label}</Flex>
                                 </ToggleButton>
-                            )}
+                            )} */}
                             {routes['/gallery'] && (
                                 <ToggleButton
                                     prefixIcon="gallery"

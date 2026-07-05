@@ -25,7 +25,11 @@ import {
 	HiChatBubbleLeftRight,
 	HiShieldCheck,
 	HiServerStack,
-	HiBriefcase
+	HiBriefcase,
+	HiSparkles,
+	HiVideoCamera,
+	HiShoppingBag,
+	HiRocketLaunch,
 } from "react-icons/hi2";
 
 import {
@@ -79,4 +83,8 @@ export const iconLibrary: Record<string, IconType> = {
 	shield: HiShieldCheck,
 	server: HiServerStack,
 	briefcase: HiBriefcase,
+	sparkles: HiSparkles,
+	video: HiVideoCamera,
+	shop: HiShoppingBag,
+	rocket: HiRocketLaunch,
 };

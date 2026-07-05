@@ -1,19 +1,17 @@
 import React from 'react';
 
-import { Heading, Flex, Text, Button, Avatar, RevealFx, Arrow, Badge, Icon } from '@/once-ui/components';
+import { Heading, Flex, Text, Button, Avatar, RevealFx, Arrow, Badge, Icon, Grid } from '@/once-ui/components';
 import { Projects } from '@/components/work/Projects';
-
-import { baseURL, routes, renderContent } from '@/app/resources';
-import { Mailchimp, ContactButton } from '@/components';
+import { baseURL, routes } from '@/app/resources';
+import { Mailchimp, ContactButton, ServiceCard } from '@/components';
 import { Posts } from '@/components/blog/Posts';
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
-import { useTranslations } from 'next-intl';
+import { unstable_setRequestLocale } from 'next-intl/server';
+import { getContent } from '@/lib/getContent';
 
 export async function generateMetadata(
 	{ params: { locale } }: { params: { locale: string } }
 ) {
-	const t = await getTranslations();
-	const { home } = renderContent(t);
+	const { home } = await getContent();
 	const title = home.title;
 	const description = home.description;
 	const ogImage = `https://${baseURL}/og?title=${encodeURIComponent(title)}`;
@@ -37,15 +35,14 @@ export async function generateMetadata(
 	};
 }
 
-export default function Home(
+export default async function Home(
 	{ params: { locale } }: { params: { locale: string } }
 ) {
 	unstable_setRequestLocale(locale);
-	const t = useTranslations();
-	const { home, about, person, newsletter, services } = renderContent(t);
+	const { home, about, person, newsletter, services } = await getContent();
 
-	// Pick top 4 service highlights for the home page
-	const highlights = services.sections.flatMap((s: any) => s.items).slice(0, 4);
+	// Pick top 3 service highlights for the home page
+	const highlights = services.sections.flatMap((s: any) => s.items).slice(0, 3);
 
 	return (
 		<Flex
@@ -96,24 +93,21 @@ export default function Home(
 						<Text
 							wrap="balance"
 							onBackground="neutral-weak"
-							variant="heading-default-xl">
+							variant="body-default-l">
 							{home.subline}
 						</Text>
 					</RevealFx>
 
-					{/* Skill badges */}
-					<RevealFx translateY={8} delay={0.3} fillWidth justifyContent="flex-start">
-						<Flex gap="8" wrap>
-							{home.badges && home.badges.map((badge: string, i: number) => (
-								<Badge
-									key={i}
-									title={badge}
-								/>
-							))}
-						</Flex>
-					</RevealFx>
+					{home.badges && (
+						<RevealFx translateY={8} delay={0.3} fillWidth justifyContent="flex-start">
+							<Flex gap="8" wrap>
+								{home.badges.map((badge: string, i: number) => (
+									<Badge key={i} title={badge} arrow={false} />
+								))}
+							</Flex>
+						</RevealFx>
+					)}
 
-					{/* Dual CTA buttons */}
 					<RevealFx translateY="12" delay={0.4}>
 						<Flex fillWidth gap="12" wrap>
 							<Button
@@ -152,38 +146,20 @@ export default function Home(
 				<Flex direction="column" gap="l" fillWidth>
 					<Flex fillWidth direction="column" gap="4">
 						<Heading as="h2" variant="display-strong-xs">
-							What I Build
+							What I build for you
 						</Heading>
 						<Text variant="body-default-m" onBackground="neutral-weak">
-							End-to-end solutions — from web apps to growth systems
+							From idea to deployed product — owned end-to-end
 						</Text>
 					</Flex>
 					<Flex wrap gap="m" fillWidth>
 						{highlights.map((item: any, i: number) => (
-							<Flex
+							<ServiceCard
 								key={i}
-								direction="column"
-								gap="12"
-								padding="l"
-								radius="l"
-								border="neutral-medium"
-								borderStyle="solid-1"
-								background="surface"
-								style={{ flex: '1 1 220px', minWidth: '200px' }}>
-								<Flex
-									padding="s"
-									radius="m"
-									background="brand-medium"
-									alignItems="center"
-									justifyContent="center"
-									style={{ width: '40px', height: '40px', flexShrink: 0 }}>
-									<Icon name={item.icon} size="s" onBackground="brand-strong" />
-								</Flex>
-								<Text variant="heading-strong-s">{item.title}</Text>
-								<Text variant="body-default-s" onBackground="neutral-weak">
-									{item.description}
-								</Text>
-							</Flex>
+								icon={item.icon}
+								title={item.title}
+								description={item.description}
+								tags={item.tags} />
 						))}
 					</Flex>
 					<Flex>
@@ -198,26 +174,101 @@ export default function Home(
 				</Flex>
 			</RevealFx>
 
-			{/* Featured Project */}
-			<RevealFx translateY="16" delay={0.6}>
-				<Projects range={[1, 1]} locale={locale} />
+			{/* Why choose me */}
+			<RevealFx translateY="12" delay={0.55} fillWidth>
+				<Flex fillWidth direction="column" gap="l">
+					<Flex direction="column" gap="4">
+						<Heading as="h2" variant="display-strong-xs">
+							Why founders work with me
+						</Heading>
+						<Text variant="body-default-m" onBackground="neutral-weak">
+							Not an agency. Not a junior freelancer. One senior engineer, fully accountable for what ships.
+						</Text>
+					</Flex>
+					<Grid columns="repeat(2, 1fr)" mobileColumns="1col" gap="l" fillWidth>
+						{[
+							{
+								icon: "rocket",
+								title: "Speed without shortcuts",
+								body: "MVPs built in weeks, not months — with clean code and proper architecture, not duct tape you'll pay to unwind later."
+							},
+							{
+								icon: "person",
+								title: "One person, full ownership",
+								body: "You talk directly to the person writing the code. No account managers, no handoffs, no lost-in-translation requirements."
+							},
+							{
+								icon: "check",
+								title: "Production-ready from day one",
+								body: "Clean, well-structured code that holds up as you grow — not a fragile prototype you'll need to rebuild the moment it matters."
+							},
+							{
+								icon: "shield",
+								title: "Startup mindset",
+								body: "I've built under real startup constraints — tight timelines, shifting scope, limited budget. I know when to move fast and when to slow down and get it right."
+							},
+						].map((item, i) => (
+							<Flex key={i} direction="column" gap="8">
+								<Flex
+									alignItems="center"
+									justifyContent="center"
+									radius="m"
+									background="brand-weak"
+									style={{ width: '40px', height: '40px', flexShrink: 0 }}>
+									<Icon name={item.icon} size="s" onBackground="brand-strong" />
+								</Flex>
+								<Text variant="heading-strong-s">{item.title}</Text>
+								<Text variant="body-default-s" onBackground="neutral-weak" style={{ lineHeight: '1.6' }}>
+									{item.body}
+								</Text>
+							</Flex>
+						))}
+					</Grid>
+					<Flex>
+						<ContactButton
+							variant="secondary"
+							size="s"
+							suffixIcon="arrowUpRight"
+							defaultSubject="Let's build something">
+							Let's talk about your project
+						</ContactButton>
+					</Flex>
+				</Flex>
+			</RevealFx>
+
+			{/* Featured Projects */}
+			<RevealFx translateY="16" delay={0.6} fillWidth>
+				<Flex direction="column" gap="l" fillWidth>
+					<Flex direction="column" gap="4">
+						<Heading as="h2" variant="display-strong-xs">
+							Recent Projects
+						</Heading>
+						<Text variant="body-default-m" onBackground="neutral-weak">
+							A sample of what I've built for clients
+						</Text>
+					</Flex>
+					<Projects range={[1, 2]} locale={locale} />
+					<Flex>
+						<Button
+							href={`/${locale}/work`}
+							variant="secondary"
+							size="s"
+							suffixIcon="arrowUpRight">
+							See all projects
+						</Button>
+					</Flex>
+				</Flex>
 			</RevealFx>
 
 			{/* Blog section */}
-			{routes['/blog'] && (
+			{/* {routes['/blog'] && (
 				<Flex fillWidth direction="column" gap="m">
-					<Heading
-						as="h2"
-						variant="display-strong-xs"
-						wrap="balance">
+					<Heading as="h2" variant="display-strong-xs" wrap="balance">
 						Latest from the blog
 					</Heading>
 					<Posts range={[1, 2]} columns="2" locale={locale} />
 				</Flex>
-			)}
-
-			{/* Rest of projects */}
-			<Projects range={[2]} locale={locale} />
+			)} */}
 
 			{/* Contact CTA */}
 			<RevealFx translateY="16" delay={0.3} fillWidth>
@@ -239,7 +290,7 @@ export default function Home(
 						onBackground="neutral-weak"
 						align="center"
 						wrap="balance">
-						Whether you have a clear vision or just a problem to solve — I'll figure out the best approach and build it right.
+						Whether you have a clear spec or just a problem to solve — I'll figure out the best approach and build it right.
 					</Text>
 					<ContactButton
 						variant="primary"

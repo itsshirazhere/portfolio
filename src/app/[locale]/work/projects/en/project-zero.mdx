@@ -1,0 +1,45 @@
+---
+title: "ZeroMoblt: Real-Time School Transport Tracking for Zero"
+publishedAt: "2025-02-01"
+summary: "Built the React Native parent app for ZeroMoblt, a school-transportation safety platform — giving parents real-time GPS trip tracking, OTP login, and instant driver contact for their children's daily commute."
+images:
+  - "/images/projects/project-zero/zero-01.png"
+  - "/images/projects/project-zero/zero-02.png"
+  - "/images/projects/project-zero/zero-03.png"
+  - "/images/projects/project-zero/zero-04.png"
+  - "/images/projects/project-zero/zero-05.png"
+  - "/images/projects/project-zero/zero-06.png"
+  - "/images/projects/project-zero/zero-07.png"
+team:
+  - name: "Shiraz"
+    role: "Software Developer"
+    avatar: "/images/avatar.jpg"
+    linkedIn: "https://www.linkedin.com/in/shiraz/"
+---
+
+## Overview
+
+ZeroMoblt is the parent-facing mobile app for a school transportation safety platform. Parents previously relied on scattered WhatsApp updates to know where their kids were during the school commute — this app replaced that with a single source of truth: live GPS tracking, trip history, and instant access to driver and vehicle details, delivered end-to-end in a 40-day build-to-deployment cycle.
+
+## Key Features
+
+- **OTP-Based Authentication**: Passwordless login via phone number, powered by AWS Cognito, with silent token refresh so parents never have to re-authenticate mid-session.
+- **Real-Time Trip Tracking**: Live map view of the school vehicle's location, updating in near real-time during an active trip.
+- **Trip Timeline & History**: Parents can review upcoming, in-progress, and completed trips, including co-passenger status, pickup/drop-off order, and delay insights.
+- **Driver & Vehicle Transparency**: Every trip surfaces verified driver details and vehicle compliance information.
+- **Multi-Child & Role Support**: One login supports Primary and Secondary parent roles, each with visibility into every linked child's trips and account details.
+- **WhatsApp-Integrated Support**: One-tap escalation to the transportation hotline via WhatsApp for login issues, billing questions, or trip concerns.
+
+## Technologies Used
+
+- **React Native**: Cross-platform mobile app for iOS and Android from a single codebase.
+- **AWS Cognito**: Phone-number OTP authentication and session/token management.
+- **AWS IoT Core**: Real-time GPS ingestion for live location updates on in-progress trips.
+- **Redis (RediSearch)**: Low-latency search across students, routes, and trips to resolve a parent's linked children and their trip history.
+- **WhatsApp Business API**: In-app support escalation without leaving the app.
+
+## Outcome
+
+Delivered a production React Native app in 40 days covering five core screens — Login, Home, Accounts, Trips, and Tracking — giving Zero's parents live visibility into their children's school commute for the first time. A phased rollout, validating one feature per test build, kept the app stable while unlocking fast feedback from real parents ahead of full deployment. Shortly after launch, ZeroMoblt went on to raise ₹1.5 crore in a pre-seed funding round co-led by Sandeep Varaganti (CEO, JioMart) and Dr. Ashok Agrawal, to expand its AI-driven student mobility platform.
+
+---

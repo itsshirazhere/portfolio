@@ -139,6 +139,7 @@ export default function Project({ params }: WorkParams) {
 			{post.metadata.images.length > 0 && (
 				<SmartImage
 					aspectRatio="16 / 9"
+					objectFit="contain"
 					radius="m"
 					alt="image"
 					src={post.metadata.images[0]}/>

@@ -94,7 +94,7 @@ const Text = <T extends ElementType = 'span'>({
     return (
         <Component
             className={combinedClasses}
-            style={{ textAlign: align, textWrap: wrap, ...style }}
+            style={{ textAlign: align, ...(align && { display: 'block' }), textWrap: wrap, ...style }}
             {...props}>
             {children}
         </Component>
